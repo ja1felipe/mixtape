@@ -1,4 +1,4 @@
-defmodule Playlistfy.Repo.Migrations.CreateUsersAuthTables do
+defmodule Mixtape.Repo.Migrations.CreateUsersAuthTables do
   use Ecto.Migration
 
   def change do

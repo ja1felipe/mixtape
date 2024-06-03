@@ -1,4 +1,4 @@
-# Playlistfy
+# Mixtape
 
 To start your Phoenix server:
 

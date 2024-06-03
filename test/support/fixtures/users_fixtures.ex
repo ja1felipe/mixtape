@@ -1,7 +1,7 @@
-defmodule Playlistfy.UsersFixtures do
+defmodule Mixtape.UsersFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Playlistfy.Users` context.
+  entities via the `Mixtape.Users` context.
   """
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -18,7 +18,7 @@ defmodule Playlistfy.UsersFixtures do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
-      |> Playlistfy.Users.register_user()
+      |> Mixtape.Users.register_user()
 
     user
   end

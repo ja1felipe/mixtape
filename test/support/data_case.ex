@@ -1,4 +1,4 @@
-defmodule Playlistfy.DataCase do
+defmodule Mixtape.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Playlistfy.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Playlistfy.DataCase, async: true`, although
+  by setting `use Mixtape.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,17 +18,17 @@ defmodule Playlistfy.DataCase do
 
   using do
     quote do
-      alias Playlistfy.Repo
+      alias Mixtape.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Playlistfy.DataCase
+      import Mixtape.DataCase
     end
   end
 
   setup tags do
-    Playlistfy.DataCase.setup_sandbox(tags)
+    Mixtape.DataCase.setup_sandbox(tags)
     :ok
   end
 
@@ -36,7 +36,7 @@ defmodule Playlistfy.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Playlistfy.Repo, shared: not tags[:async])
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Mixtape.Repo, shared: not tags[:async])
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

@@ -1,9 +1,9 @@
-defmodule Playlistfy.MixProject do
+defmodule Mixtape.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :playlistfy,
+      app: :mixtape,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,7 +18,7 @@ defmodule Playlistfy.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Playlistfy.Application, []},
+      mod: {Mixtape.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -58,7 +58,8 @@ defmodule Playlistfy.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.2"}
+      {:bandit, "~> 1.2"},
+      {:dotenvy, "~> 0.8.0"}
     ]
   end
 
@@ -75,10 +76,10 @@ defmodule Playlistfy.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind playlistfy", "esbuild playlistfy"],
+      "assets.build": ["tailwind mixtape", "esbuild mixtape"],
       "assets.deploy": [
-        "tailwind playlistfy --minify",
-        "esbuild playlistfy --minify",
+        "tailwind mixtape --minify",
+        "esbuild mixtape --minify",
         "phx.digest"
       ]
     ]

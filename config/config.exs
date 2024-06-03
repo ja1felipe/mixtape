@@ -7,19 +7,19 @@
 # General application configuration
 import Config
 
-config :playlistfy,
-  ecto_repos: [Playlistfy.Repo],
+config :mixtape,
+  ecto_repos: [Mixtape.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 # Configures the endpoint
-config :playlistfy, PlaylistfyWeb.Endpoint,
+config :mixtape, MixtapeWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: PlaylistfyWeb.ErrorHTML, json: PlaylistfyWeb.ErrorJSON],
+    formats: [html: MixtapeWeb.ErrorHTML, json: MixtapeWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Playlistfy.PubSub,
+  pubsub_server: Mixtape.PubSub,
   live_view: [signing_salt: "0T3/G5Qd"]
 
 # Configures the mailer
@@ -29,12 +29,12 @@ config :playlistfy, PlaylistfyWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :playlistfy, Playlistfy.Mailer, adapter: Swoosh.Adapters.Local
+config :mixtape, Mixtape.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  playlistfy: [
+  mixtape: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -44,7 +44,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.0",
-  playlistfy: [
+  mixtape: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css

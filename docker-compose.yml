@@ -3,8 +3,8 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_DB: playlistfy_db
-      POSTGRES_USER: playlistfy
+      POSTGRES_DB: mixtape_db
+      POSTGRES_USER: mixtape
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
       ALLOW_IP_RANGE: 0.0.0.0/0
