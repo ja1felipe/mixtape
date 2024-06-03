@@ -1,0 +1,15 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+    font-family: 'Fjalla';
+    /* Name your font family */
+    src: url('/fonts/FjallaOne-Regular.ttf');
+    /* Locate the .ttf file within your directory*/
+}
+
+/* This file is for your main application CSS */
+body>div {
+    height: 100%;
+}
