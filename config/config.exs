@@ -11,6 +11,8 @@ config :mixtape,
   ecto_repos: [Mixtape.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+config :mixtape, :spotify_client_id, System.get_env("SPOTIFY_CLIENT_ID")
+
 # Configures the endpoint
 config :mixtape, MixtapeWeb.Endpoint,
   url: [host: "localhost"],
