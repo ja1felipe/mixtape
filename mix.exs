@@ -59,7 +59,6 @@ defmodule Mixtape.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:dotenvy, "~> 0.8.0"}
     ]
   end
 

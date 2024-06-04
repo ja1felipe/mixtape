@@ -35,6 +35,6 @@ mixtape-*.tar
 npm-debug.log
 /assets/node_modules/
 
-.env
+.envrc
 
 /postgres_data
