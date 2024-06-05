@@ -12,6 +12,7 @@ config :mixtape,
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 config :mixtape, :spotify_client_id, System.get_env("SPOTIFY_CLIENT_ID")
+config :mixtape, :spotify_client_secret, System.get_env("SPOTIFY_CLIENT_SECRET")
 
 # Configures the endpoint
 config :mixtape, MixtapeWeb.Endpoint,

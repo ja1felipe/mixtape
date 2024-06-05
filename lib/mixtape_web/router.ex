@@ -73,6 +73,8 @@ defmodule MixtapeWeb.Router do
 
     delete "/users/log_out", UserSessionController, :delete
 
+    get "/webhook", WebhookController, :webhook
+
     live_session :current_user,
       on_mount: [{MixtapeWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
