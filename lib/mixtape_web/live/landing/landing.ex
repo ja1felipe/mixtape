@@ -2,9 +2,7 @@ defmodule MixtapeWeb.LandingLive do
   alias Services.SpotifyAPI
   use MixtapeWeb, :live_view
 
-  def mount(_params, session, socket) do
-    IO.inspect(session)
-
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 

@@ -1,15 +1,21 @@
 defmodule Services.SpotifyAPI do
   use Tesla
 
-  plug Tesla.Middleware.BaseUrl, "https://accounts.spotify.com"
-  plug Tesla.Middleware.Headers, [{"Content-Type", "application/json"}]
-  plug Tesla.Middleware.JSON
+  @authorization_url "https://accounts.spotify.com"
+
+  @api_url "https://api.spotify.com/v1"
+
+  @middleware [
+    {Tesla.Middleware.BaseUrl, @api_url},
+    {Tesla.Middleware.Headers, [{"Content-Type", "application/json"}]},
+    Tesla.Middleware.JSON
+  ]
 
   def login() do
-    scope = "playlist-modify-private playlist-modify-public user-read-email"
+    scope = "playlist-modify-private playlist-modify-public user-read-email user-read-private"
 
     url =
-      Tesla.build_url("https://accounts.spotify.com/authorize",
+      Tesla.build_url(@authorization_url <> "/authorize",
         response_type: "code",
         client_id: Application.get_env(:mixtape, :spotify_client_id),
         scope: scope,
@@ -22,21 +28,34 @@ defmodule Services.SpotifyAPI do
 
   def token(code) do
     formClient =
-      Tesla.client([
-        {Tesla.Middleware.BaseUrl, "https://accounts.spotify.com"},
-        {Tesla.Middleware.Headers,
-         [
-           {"Content-Type", "application/x-www-form-urlencoded"},
-           {"Authorization", generate_authorization_header()}
-         ]},
-        Tesla.Middleware.FormUrlencoded
-      ])
+      Tesla.client(
+        [
+          {Tesla.Middleware.BaseUrl, @authorization_url},
+          {Tesla.Middleware.Headers,
+           [
+             {"Content-Type", "application/x-www-form-urlencoded"},
+             {"Authorization", generate_authorization_header()}
+           ]},
+          Tesla.Middleware.FormUrlencoded
+        ] ++ @middleware
+      )
 
-    post(formClient, "/api/token ", %{
+    post(formClient, "/api/token", %{
       grant_type: "authorization_code",
       code: code,
       redirect_uri: "http://localhost:4000/webhook"
     })
+  end
+
+  def get_profile(access_token) do
+    middleware =
+      [
+        {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
+      ] ++ @middleware
+
+    client = Tesla.client(middleware)
+
+    get(client, "/me")
   end
 
   defp generate_authorization_header do
@@ -46,6 +65,6 @@ defmodule Services.SpotifyAPI do
     auth_string = "#{client_id}:#{client_secret}"
     encoded_auth_string = Base.encode64(auth_string)
 
-    "Authorization: Basic #{encoded_auth_string}"
+    "Basic #{encoded_auth_string}"
   end
 end
