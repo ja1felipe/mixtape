@@ -4,44 +4,67 @@ defmodule MixtapeWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias Services.SpotifyAPI
   alias Mixtape.Users
 
+  require Logger
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
   # the token expiry itself in UserToken.
-  @max_age 60 * 60 * 24 * 60
   @remember_me_cookie "_mixtape_web_user_remember_me"
-  @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
-  @doc """
-  Logs the user in.
+  def spotify_login(conn, code, _params \\ %{}) do
+    case SpotifyAPI.token(code) do
+      {:ok, response} ->
+        response.body["access_token"]
+        |> get_spotify_user()
+        |> get_or_create_user(response.body["access_token"], response.body["refresh_token"])
 
-  It renews the session ID and clears the whole session
-  to avoid fixation attacks. See the renew_session
-  function to customize this behaviour.
+        conn
+        |> put_session(:access_token, response.body["access_token"])
+        |> redirect(to: "/home")
 
-  It also sets a `:live_socket_id` key in the session,
-  so LiveView sessions are identified and automatically
-  disconnected on log out. The line can be safely removed
-  if you are not using LiveView.
-  """
-  def log_in_user(conn, user, params \\ %{}) do
-    token = Users.generate_user_session_token(user)
-    user_return_to = get_session(conn, :user_return_to)
+      {:error, response} ->
+        IO.inspect(response)
 
-    conn
-    |> renew_session()
-    |> put_token_in_session(token)
-    |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+        conn
+        |> redirect(to: "/")
+    end
   end
 
-  defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
-    put_resp_cookie(conn, @remember_me_cookie, token, @remember_me_options)
+  defp get_spotify_user(token) do
+    case SpotifyAPI.get_profile(token) do
+      {:ok, response} ->
+        Logger.info("Spotify user: #{inspect(response)}")
+
+        response.body
+
+      {:error, response} ->
+        IO.inspect(response)
+        nil
+    end
   end
 
-  defp maybe_write_remember_me_cookie(conn, _token, _params) do
-    conn
+  defp get_or_create_user(spotify_user, access_token, refresh_token) do
+    user = Users.get_user_by_spotify_id(spotify_user["id"])
+
+    if user == nil do
+      user =
+        Users.register_user(%{
+          "spotify_id" => spotify_user["id"],
+          "email" => spotify_user["email"],
+          "name" => spotify_user["display_name"],
+          "access_token" => access_token,
+          "refresh_token" => refresh_token
+        })
+
+      Logger.info("User: #{inspect(user)}")
+
+      user
+    else
+      user
+      |> Users.update_user_access_token(access_token, refresh_token)
+    end
   end
 
   # This function renews the session ID and erases the whole
@@ -73,8 +96,8 @@ defmodule MixtapeWeb.UserAuth do
   It clears all session data for safety. See renew_session.
   """
   def log_out_user(conn) do
-    user_token = get_session(conn, :user_token)
-    user_token && Users.delete_user_session_token(user_token)
+    access_token = get_session(conn, :access_token)
+    access_token && Users.delete_user_access_token(access_token)
 
     if live_socket_id = get_session(conn, :live_socket_id) do
       MixtapeWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
@@ -91,13 +114,13 @@ defmodule MixtapeWeb.UserAuth do
   and remember me token.
   """
   def fetch_current_user(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Users.get_user_by_session_token(user_token)
+    {access_token, conn} = ensure_access_token(conn)
+    user = access_token && Users.get_user_by_access_token(access_token)
     assign(conn, :current_user, user)
   end
 
-  defp ensure_user_token(conn) do
-    if token = get_session(conn, :user_token) do
+  defp ensure_access_token(conn) do
+    if token = get_session(conn, :access_token) do
       {token, conn}
     else
       conn = fetch_cookies(conn, signed: [@remember_me_cookie])
@@ -158,7 +181,7 @@ defmodule MixtapeWeb.UserAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/")
 
       {:halt, socket}
     end
@@ -176,8 +199,8 @@ defmodule MixtapeWeb.UserAuth do
 
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        Users.get_user_by_session_token(user_token)
+      if access_token = session["access_token"] do
+        Users.get_user_by_access_token(access_token)
       end
     end)
   end
@@ -208,7 +231,7 @@ defmodule MixtapeWeb.UserAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
+      |> redirect(to: ~p"/")
       |> halt()
     end
   end
