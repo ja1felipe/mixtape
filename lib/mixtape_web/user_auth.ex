@@ -16,12 +16,18 @@ defmodule MixtapeWeb.UserAuth do
   def spotify_login(conn, code, _params \\ %{}) do
     case SpotifyAPI.token(code) do
       {:ok, response} ->
+        expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
+
         response.body["access_token"]
         |> get_spotify_user()
         |> get_or_create_user(response.body["access_token"], response.body["refresh_token"])
 
         conn
-        |> put_session(:access_token, response.body["access_token"])
+        |> put_session(:access_token, %{
+          access_token: response.body["access_token"],
+          timeout: expiration
+        })
+        |> clear_flash()
         |> redirect(to: "/home")
 
       {:error, response} ->
@@ -96,8 +102,8 @@ defmodule MixtapeWeb.UserAuth do
   It clears all session data for safety. See renew_session.
   """
   def log_out_user(conn) do
-    access_token = get_session(conn, :access_token)
-    access_token && Users.delete_user_access_token(access_token)
+    token = get_session(conn, :access_token)
+    token[:access_token] && Users.delete_user_access_token(token[:access_token])
 
     if live_socket_id = get_session(conn, :live_socket_id) do
       MixtapeWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
@@ -114,8 +120,8 @@ defmodule MixtapeWeb.UserAuth do
   and remember me token.
   """
   def fetch_current_user(conn, _opts) do
-    {access_token, conn} = ensure_access_token(conn)
-    user = access_token && Users.get_user_by_access_token(access_token)
+    {token, conn} = ensure_access_token(conn)
+    user = token[:access_token] && Users.get_user_by_access_token(token[:access_token])
     assign(conn, :current_user, user)
   end
 
@@ -180,7 +186,10 @@ defmodule MixtapeWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          "Você precisa estar logado para acessar esta página."
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/")
 
       {:halt, socket}
@@ -188,6 +197,8 @@ defmodule MixtapeWeb.UserAuth do
   end
 
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
+    IO.puts("REDIRECT_IF_USER_IS_AUTHENTICATED")
+    IO.inspect(socket)
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
@@ -199,10 +210,49 @@ defmodule MixtapeWeb.UserAuth do
 
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if access_token = session["access_token"] do
-        Users.get_user_by_access_token(access_token)
+      token = session["access_token"]
+      access_token = token[:access_token]
+
+      if access_token do
+        case Users.get_user_by_access_token(access_token) do
+          nil ->
+            nil
+
+          user ->
+            if DateTime.compare(DateTime.utc_now(), token[:timeout]) == :gt do
+              refresh_access_token(socket, user.refresh_token)
+            else
+              user
+            end
+        end
       end
     end)
+  end
+
+  defp refresh_access_token(socket, refresh_token) do
+    case SpotifyAPI.refresh_token(refresh_token) do
+      {:ok, response} ->
+        IO.inspect(response)
+        expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
+
+        user =
+          response.body["access_token"]
+          |> get_spotify_user()
+          |> get_or_create_user(response.body["access_token"], response.body["refresh_token"])
+
+        socket
+        |> put_session(:access_token, %{
+          access_token: response.body["access_token"],
+          timeout: expiration
+        })
+
+        IO.puts("REFRESHOU!")
+        user
+
+      {:error, response} ->
+        IO.inspect(response)
+        nil
+    end
   end
 
   @doc """
@@ -229,7 +279,7 @@ defmodule MixtapeWeb.UserAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
+      |> put_flash(:error, "Você precisa estar logado para acessar esta página.")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/")
       |> halt()

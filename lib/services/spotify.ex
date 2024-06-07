@@ -47,6 +47,27 @@ defmodule Services.SpotifyAPI do
     })
   end
 
+  def refresh_token(refresh_token) do
+    formClient =
+      Tesla.client(
+        [
+          {Tesla.Middleware.BaseUrl, @authorization_url},
+          {Tesla.Middleware.Headers,
+           [
+             {"Content-Type", "application/x-www-form-urlencoded"},
+             {"Authorization", generate_authorization_header()}
+           ]},
+          Tesla.Middleware.FormUrlencoded
+        ] ++ @middleware
+      )
+
+    post(formClient, "/api/token", %{
+      grant_type: "refresh_token",
+      refresh_token: refresh_token,
+      client_id: Application.get_env(:mixtape, :spotify_client_id)
+    })
+  end
+
   def get_profile(access_token) do
     middleware =
       [
