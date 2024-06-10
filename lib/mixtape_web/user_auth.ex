@@ -14,13 +14,15 @@ defmodule MixtapeWeb.UserAuth do
   @remember_me_cookie "_mixtape_web_user_remember_me"
 
   def spotify_login(conn, code, _params \\ %{}) do
-    case SpotifyAPI.token(code) do
+    verifier = get_session(conn, :verifier)
+
+    case SpotifyAPI.token(code, verifier) do
       {:ok, response} ->
         expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
 
         response.body["access_token"]
         |> get_spotify_user()
-        |> get_or_create_user(response.body["access_token"], response.body["refresh_token"])
+        |> create_or_update_user(response.body["access_token"], response.body["refresh_token"])
 
         conn
         |> put_session(:access_token, %{
@@ -51,11 +53,9 @@ defmodule MixtapeWeb.UserAuth do
     end
   end
 
-  defp get_or_create_user(spotify_user, access_token, refresh_token) do
-    user = Users.get_user_by_spotify_id(spotify_user["id"])
-
-    if user == nil do
-      user =
+  defp create_or_update_user(%{} = spotify_user, access_token, refresh_token) do
+    case Users.get_user_by_spotify_id(spotify_user["id"]) do
+      nil ->
         Users.register_user(%{
           "spotify_id" => spotify_user["id"],
           "email" => spotify_user["email"],
@@ -64,12 +64,9 @@ defmodule MixtapeWeb.UserAuth do
           "refresh_token" => refresh_token
         })
 
-      Logger.info("User: #{inspect(user)}")
-
-      user
-    else
-      user
-      |> Users.update_user_access_token(access_token, refresh_token)
+      user ->
+        user
+        |> Users.update_user_access_token(access_token, refresh_token)
     end
   end
 
@@ -197,8 +194,6 @@ defmodule MixtapeWeb.UserAuth do
   end
 
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
-    IO.puts("REDIRECT_IF_USER_IS_AUTHENTICATED")
-    IO.inspect(socket)
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
@@ -211,16 +206,19 @@ defmodule MixtapeWeb.UserAuth do
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       token = session["access_token"]
-      access_token = token[:access_token]
 
-      if access_token do
+      if access_token = token[:access_token] do
         case Users.get_user_by_access_token(access_token) do
           nil ->
             nil
 
           user ->
             if DateTime.compare(DateTime.utc_now(), token[:timeout]) == :gt do
-              refresh_access_token(socket, user.refresh_token)
+              if user.refresh_token do
+                refresh_access_token(session, user)
+              else
+                log_out_user(socket)
+              end
             else
               user
             end
@@ -229,8 +227,8 @@ defmodule MixtapeWeb.UserAuth do
     end)
   end
 
-  defp refresh_access_token(socket, refresh_token) do
-    case SpotifyAPI.refresh_token(refresh_token) do
+  defp refresh_access_token(session, user) do
+    case SpotifyAPI.refresh_token(user.refresh_token) do
       {:ok, response} ->
         IO.inspect(response)
         expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
@@ -238,15 +236,14 @@ defmodule MixtapeWeb.UserAuth do
         user =
           response.body["access_token"]
           |> get_spotify_user()
-          |> get_or_create_user(response.body["access_token"], response.body["refresh_token"])
+          |> create_or_update_user(response.body["access_token"], response.body["refresh_token"])
 
-        socket
-        |> put_session(:access_token, %{
+        session
+        |> Plug.Conn.put_session(:access_token, %{
           access_token: response.body["access_token"],
           timeout: expiration
         })
 
-        IO.puts("REFRESHOU!")
         user
 
       {:error, response} ->

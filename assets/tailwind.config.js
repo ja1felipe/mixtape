@@ -15,6 +15,7 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
+        primary: "#3ef9b1"
       },
       fontFamily: {
         brand: ["Fjalla", "sans-serif"]

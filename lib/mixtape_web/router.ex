@@ -61,7 +61,8 @@ defmodule MixtapeWeb.Router do
   scope "/", MixtapeWeb do
     pipe_through [:browser]
 
-    get "/webhook", WebhookController, :webhook
+    get "/webhook", SpotifyLoginController, :webhook
+    get "/login", SpotifyLoginController, :login
     get "/users/log_out", UserController, :logout
 
     live_session :current_user,

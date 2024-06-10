@@ -1,11 +1,12 @@
 <div class="w-full h-full flex items-center justify-center">
   <div class="flex flex-col p-2 bg-gray-900 border border-slate-800 rounded-sm text-2xl text-white xs:w-7/12 md:w-5/12 lg:w-4/12 xl:w-3/12 w-6/12 rounded-ss">
     <h1>MIXTAPE</h1>
-    <button
-      phx-click="login-spotify"
+    <.link
+      href={~p"/login"}
+      method="get"
       class="flex flex-row gap-2 border border-slate-800 w-fit p-2 rounded-md self-center"
     >
       <img width="30" src="/images/spotify.svg" alt="icon" /> LOGIN SPOTIFY
-    </button>
+    </.link>
   </div>
 </div>

@@ -11,7 +11,7 @@ defmodule Services.SpotifyAPI do
     Tesla.Middleware.JSON
   ]
 
-  def login() do
+  def login(code) do
     scope = "playlist-modify-private playlist-modify-public user-read-email user-read-private"
 
     url =
@@ -20,13 +20,14 @@ defmodule Services.SpotifyAPI do
         client_id: Application.get_env(:mixtape, :spotify_client_id),
         scope: scope,
         redirect_uri: "http://localhost:4000/webhook",
-        state: Utils.generateRandomString(16)
+        code_challenge_method: "S256",
+        code_challenge: code
       )
 
     url
   end
 
-  def token(code) do
+  def token(code, verifier) do
     formClient =
       Tesla.client(
         [
@@ -43,7 +44,9 @@ defmodule Services.SpotifyAPI do
     post(formClient, "/api/token", %{
       grant_type: "authorization_code",
       code: code,
-      redirect_uri: "http://localhost:4000/webhook"
+      redirect_uri: "http://localhost:4000/webhook",
+      code_verifier: verifier,
+      client_id: Application.get_env(:mixtape, :spotify_client_id)
     })
   end
 
