@@ -91,4 +91,19 @@ defmodule Services.SpotifyAPI do
 
     "Basic #{encoded_auth_string}"
   end
+
+  def search(access_token, search, page \\ 0) do
+    limit = 5
+
+    middleware =
+      [
+        {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
+      ] ++ @middleware
+
+    client = Tesla.client(middleware)
+
+    get(client, "/search",
+      query: [q: search, type: "artist", limit: limit, market: "BR", offset: page * limit]
+    )
+  end
 end

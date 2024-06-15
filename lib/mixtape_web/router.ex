@@ -63,7 +63,7 @@ defmodule MixtapeWeb.Router do
 
     get "/webhook", SpotifyLoginController, :webhook
     get "/login", SpotifyLoginController, :login
-    get "/users/log_out", UserController, :logout
+    delete "/logout", UserController, :logout
 
     live_session :current_user,
       on_mount: [{MixtapeWeb.UserAuth, :mount_current_user}] do

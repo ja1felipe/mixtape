@@ -1,8 +1,15 @@
 <div class="w-full h-full flex items-center justify-center">
-  <div class="flex h-3/6 flex-row gap-2 bg-gray-900 border border-slate-800 rounded-sm text-white xs:w-9/12 md:w-7/12 lg:w-6/12 xl:w-5/12 w-8/12 rounded-ss">
+  <div class="flex h-[60%] flex-row gap-2 bg-gray-900 border border-slate-800 rounded-sm text-white xs:w-9/12 md:w-7/12 lg:w-6/12 xl:w-5/12 w-8/12 rounded-ss">
     <div class="flex p-2 flex-col basis-1/3 grow  ">
       <p class=" text-xl">SUAS MIXTAPES</p>
       <.empty_mixtapes />
+      <.link
+        href={~p"/logout"}
+        method="delete"
+        class="border-t pt-2 text-slate-400 border-slate-600 hover:text-slate-200 hover:border-slate-400 flex flex-row items-center justify-center"
+      >
+        sair <.icon name="hero-arrow-right-start-on-rectangle" class="h-5 w-5" />
+      </.link>
     </div>
     <div class="border-r m-1 border-slate-800"></div>
     <.form phx-change="search" for={@form} class="flex p-2 flex-col basis-2/3 grow">
