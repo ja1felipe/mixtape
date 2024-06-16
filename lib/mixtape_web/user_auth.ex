@@ -18,7 +18,7 @@ defmodule MixtapeWeb.UserAuth do
 
     case SpotifyAPI.token(code, verifier) do
       {:ok, response} ->
-        expiration = DateTime.utc_now() |> DateTime.add(60, :second)
+        expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
 
         response.body["access_token"]
         |> get_spotify_user()
@@ -121,8 +121,20 @@ defmodule MixtapeWeb.UserAuth do
   """
   def fetch_current_user(conn, _opts) do
     {token, conn} = ensure_access_token(conn)
-    user = token[:access_token] && Users.get_user_by_access_token(token[:access_token])
-    assign(conn, :current_user, user)
+
+    if token && DateTime.compare(DateTime.utc_now(), token[:timeout]) == :gt do
+      if new_token = refresh_access_token(token[:refresh_token]) do
+        conn = put_token_in_session(conn, new_token)
+        user = Users.get_user_by_access_token(new_token.access_token)
+        assign(conn, :current_user, user)
+      else
+        user = token[:access_token] && Users.get_user_by_access_token(token[:access_token])
+        assign(conn, :current_user, user)
+      end
+    else
+      user = token[:access_token] && Users.get_user_by_access_token(token[:access_token])
+      assign(conn, :current_user, user)
+    end
   end
 
   defp ensure_access_token(conn) do
@@ -130,6 +142,35 @@ defmodule MixtapeWeb.UserAuth do
       {token, conn}
     else
       {nil, conn}
+    end
+  end
+
+  defp refresh_access_token(refresh_token) do
+    case SpotifyAPI.refresh_token(refresh_token) do
+      {:ok, response} ->
+        if response.status != 200 do
+          IO.inspect(response)
+          nil
+        else
+          expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
+
+          response.body["access_token"]
+          |> get_spotify_user()
+          |> create_or_update_user(
+            response.body["access_token"],
+            response.body["refresh_token"]
+          )
+
+          %{
+            access_token: response.body["access_token"],
+            timeout: expiration,
+            refresh_token: response.body["refresh_token"]
+          }
+        end
+
+      {:error, response} ->
+        IO.inspect(response)
+        nil
     end
   end
 
@@ -174,8 +215,6 @@ defmodule MixtapeWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
-    IO.puts("DESGRAÇA DO ON MOUNT")
-    IO.inspect(socket.assigns)
 
     if socket.assigns.current_user do
       {:cont, socket}
@@ -207,56 +246,13 @@ defmodule MixtapeWeb.UserAuth do
       token = session["access_token"]
 
       if access_token = token[:access_token] do
-        IO.puts("OQUE CHEGA AQUI" <> access_token)
-
-        case Users.get_user_by_access_token(access_token) do
-          nil ->
-            nil
-
-          user ->
-            user
+        if DateTime.compare(DateTime.utc_now(), token[:timeout]) == :gt && token[:refresh_token] do
+          Users.get_user_by_access_token(token[:refresh_token])
+        else
+          Users.get_user_by_access_token(access_token)
         end
       end
     end)
-  end
-
-  defp refresh_access_token(conn, refresh_token) do
-    case SpotifyAPI.refresh_token(refresh_token) do
-      {:ok, response} ->
-        IO.puts("REFRESHED ENTROU AQUI")
-
-        if response.status != 200 do
-          IO.puts("REFRESHED ENTROU AQUI2")
-
-          IO.inspect(response)
-          conn
-        else
-          IO.inspect(response)
-          expiration = DateTime.utc_now() |> DateTime.add(response.body["expires_in"], :second)
-
-          response.body["access_token"]
-          |> get_spotify_user()
-          |> create_or_update_user(response.body["access_token"], response.body["refresh_token"])
-
-          token = %{
-            access_token: response.body["access_token"],
-            timeout: expiration,
-            refresh_token: response.body["refresh_token"]
-          }
-
-          IO.puts("OLHA ESSE REFRESHADO AQUI")
-          IO.inspect(token)
-
-          conn
-          |> put_token_in_session(token)
-
-          conn
-        end
-
-      {:error, response} ->
-        IO.inspect(response)
-        conn
-    end
   end
 
   @doc """
@@ -279,17 +275,8 @@ defmodule MixtapeWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    token = get_session(conn, :access_token)
-    IO.inspect(token)
-
     if conn.assigns[:current_user] do
-      if token = get_session(conn, :access_token) do
-        if DateTime.compare(DateTime.utc_now(), token[:timeout]) == :gt && token[:refresh_token] do
-          refresh_access_token(conn, token[:refresh_token])
-        else
-          conn
-        end
-      end
+      conn
     else
       conn
       |> put_flash(:error, "Você precisa estar logado para acessar esta página2.")
@@ -300,9 +287,6 @@ defmodule MixtapeWeb.UserAuth do
   end
 
   defp put_token_in_session(conn, token) do
-    IO.puts("O DA PORRA DO PUT TOKEN IN SESSIONS")
-    IO.inspect(token)
-
     conn
     |> put_session(:access_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token[:access_token])}")
