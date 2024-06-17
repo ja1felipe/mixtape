@@ -45,7 +45,7 @@ defmodule MixtapeWeb.Home.Components do
     ~H"""
     <div phx-hook={@click_away} id={@id} class="hidden">
       <%= if length(@artists) > 0 do %>
-        <ul class="search-list flex flex-col border border-slate-400 overflow-hidden mt-2 rounded-md">
+        <ul class="search-list flex flex-col border border-slate-400 overflow-hidden mt-2 rounded-md absolute w-full">
           <%= for artist <- @artists do %>
             <.artist_card artist={artist} />
           <% end %>
