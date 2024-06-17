@@ -13,3 +13,29 @@
 body>div {
     height: 100%;
 }
+
+.search-list li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.296);
+}
+
+.search-list li:last-child {
+    border-bottom: none;
+}
+
+#search-box {
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+#search-box.fade-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+#search-box.fade-out {
+    opacity: 0;
+    transform: translateX(10%);
+}
+
+#search-box.hidden {
+    display: none;
+}
