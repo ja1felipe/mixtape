@@ -11,7 +11,40 @@ defmodule MixtapeWeb.HomeLive do
     socket =
       socket
       |> assign(form: to_form(form))
-      |> assign(artists: [])
+      |> assign(
+        artists: [
+          %{
+            id: "29QKtXMaVczUBDiI3aPBWS",
+            name: "FBC",
+            image: "https://i.scdn.co/image/ab6761610000f178f11fcf161bed1f72afb30a21",
+            uri: "spotify:artist:29QKtXMaVczUBDiI3aPBWS"
+          },
+          %{
+            id: "6aCbXH85qN6xo54C7atSMx",
+            name: "Black Alien",
+            image: "https://i.scdn.co/image/ab6761610000f178ba2786969b06c231b04a3f80",
+            uri: "spotify:artist:6aCbXH85qN6xo54C7atSMx"
+          },
+          %{
+            id: "5JHYuwE2n7bleXMUsmtCW5",
+            name: "BaianaSystem",
+            image: "https://i.scdn.co/image/ab6761610000f178ac291f376ca791339f922209",
+            uri: "spotify:artist:5JHYuwE2n7bleXMUsmtCW5"
+          },
+          %{
+            id: "25iPyUnAhtlrcpkscGuXgm",
+            name: "Fbc",
+            image: nil,
+            uri: "spotify:artist:25iPyUnAhtlrcpkscGuXgm"
+          },
+          %{
+            id: "38kjd8LvypN0JqxHcXYvqh",
+            name: "FBCORUJA",
+            image: nil,
+            uri: "spotify:artist:38kjd8LvypN0JqxHcXYvqh"
+          }
+        ]
+      )
 
     {:ok, socket}
   end
@@ -21,8 +54,6 @@ defmodule MixtapeWeb.HomeLive do
 
     case SpotifyAPI.search(user.access_token, search) do
       {:ok, response} ->
-        IO.inspect(response)
-
         if response.status == 200 do
           result =
             response.body

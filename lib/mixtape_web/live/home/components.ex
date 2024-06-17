@@ -57,7 +57,7 @@ defmodule MixtapeWeb.Home.Components do
 
   def artist_card(assigns) do
     ~H"""
-    <li class="flex opacity-80 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer">
+    <li class="flex opacity-95 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer">
       <div class="w-14 h-14 overflow-hidden rounded-md flex bg-gray-700">
         <%= if @artist.image do %>
           <img src={@artist.image} class="w-14 h-14 object-cover overflow-hidden" alt={@artist.name} />

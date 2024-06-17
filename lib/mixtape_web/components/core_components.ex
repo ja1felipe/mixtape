@@ -378,7 +378,7 @@ defmodule MixtapeWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-md bg-slate-900 border-slate-800 text-white focus:ring-0 sm:text-sm sm:leading-5",
+          "mt-2 block w-full rounded-md bg-slate-900 border-slate-800 text-white focus:ring-0 sm:text-lg sm:leading-7",
           "phx-no-feedback:border-slate-500 phx-no-feedback:focus:border-slate-600",
           @errors == [] && "border-slate-500 focus:border-slate-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
