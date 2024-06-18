@@ -38,12 +38,12 @@ defmodule MixtapeWeb.Home.Components do
 
   attr :artists, :list, required: true
   attr :id, :string, required: true
-  attr :click_away, :string
+  attr :phx_hook, :string
   attr :hidden, :string, default: "true"
 
   def artist_search_list(assigns) do
     ~H"""
-    <div phx-hook={@click_away} id={@id} class="hidden">
+    <div phx-hook={@phx_hook} id={@id} class="hidden">
       <%= if length(@artists) > 0 do %>
         <ul class="search-list flex flex-col border border-slate-400 overflow-hidden mt-2 rounded-md absolute w-full">
           <%= for artist <- @artists do %>
@@ -57,16 +57,16 @@ defmodule MixtapeWeb.Home.Components do
 
   def artist_card(assigns) do
     ~H"""
-    <li class="flex opacity-95 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer">
+    <li class="flex opacity-95 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer search-item">
       <div class="w-14 h-14 overflow-hidden rounded-md flex bg-gray-700">
         <%= if @artist.image do %>
           <img src={@artist.image} class="w-14 h-14 object-cover overflow-hidden" alt={@artist.name} />
         <% else %>
-          <.icon class="self-center m-auto" name="hero-photo" />
+          <.icon class="self-center m-auto " name="hero-photo" />
         <% end %>
       </div>
       <p class="text-xl"><%= @artist.name %></p>
-      <.icon class="self-center ml-auto w-8 h-8 " name="hero-plus-circle" />
+      <.icon id="add-icon" class="self-center ml-auto w-8 h-8" name="hero-plus-circle" />
     </li>
     """
   end

@@ -15,11 +15,20 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-        primary: "#3ef9b1"
+        primary: "#15fb7e"
       },
       fontFamily: {
         brand: ["Fjalla", "sans-serif"]
-      }
+      },
+      animation: {
+        rotateOnce: 'rotateOnce 0.8s ease-out forwards',
+      },
+      keyframes: {
+        rotateOnce: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(90deg)' },
+        },
+      },
     },
   },
   plugins: [

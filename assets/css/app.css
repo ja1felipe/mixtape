@@ -39,3 +39,10 @@ body>div {
 #search-box.hidden {
     display: none;
 }
+
+.search-item:hover #add-icon {
+    @apply text-primary;
+    @apply transition-transform;
+    @apply duration-1000;
+    @apply animate-rotateOnce;
+}

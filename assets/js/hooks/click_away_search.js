@@ -8,7 +8,6 @@ SearchHooks = {
         if (input) {
             input.addEventListener("focus", this.handleFocus)
         }
-
     },
     updated() {
         this.handleUpdate()
@@ -36,7 +35,6 @@ SearchHooks = {
     },
     handleFocus(event) {
         let searchBox = document.querySelector("#search-box")
-        console.log(searchBox)
         if (searchBox) {
             searchBox.classList.remove("hidden")
             setTimeout(() => {
@@ -47,6 +45,7 @@ SearchHooks = {
     },
     handleUpdate() {
         let searchBox = document.querySelector("#search-box")
+        console.log("cu")
         if (searchBox) {
             searchBox.classList.remove("hidden")
             searchBox.classList.remove("fade-out")
