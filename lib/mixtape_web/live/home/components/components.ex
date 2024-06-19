@@ -76,21 +76,18 @@ defmodule MixtapeWeb.Home.Components do
         <% end %>
       </div>
       <p class="text-xl"><%= @artist["name"] %></p>
-      <%= if @artist["selected"] do %>
-        true
-      <% else %>
-        false
-      <% end %>
-      <div :if={@artist["selected"]}>
-        <.icon
-          id="remove-icon"
-          class="self-center ml-auto w-8 h-8 text-primary transition-colors"
-          name="hero-plus-circle"
-        />
-      </div>
-      <div :if={!@artist["selected"]}>
-        <.icon id="add-icon" class="self-center ml-auto w-8 h-8" name="hero-plus-circle" />
-      </div>
+      <%= is_boolean(@artist["selected"]) %>
+      <%= !@artist["selected"] %>
+      <.icon
+        show={@artist["selected"]}
+        class="self-center ml-auto w-8 h-8 text-primary transition-colors remove-icon"
+        name="hero-plus-circle"
+      />
+      <.icon
+        show={!@artist["selected"]}
+        class="self-center ml-auto w-8 h-8 add-icon"
+        name="hero-plus-circle"
+      />
     </li>
     """
   end
