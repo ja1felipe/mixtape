@@ -1,4 +1,5 @@
 defmodule MixtapeWeb.Home.Components do
+  alias Phoenix.LiveView.JS
   use Phoenix.Component
 
   import MixtapeWeb.CoreComponents
@@ -55,18 +56,41 @@ defmodule MixtapeWeb.Home.Components do
     """
   end
 
+  attr :artist, :map, required: true
+
   def artist_card(assigns) do
     ~H"""
-    <li class="flex opacity-95 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer search-item">
+    <li
+      phx-click={JS.push("select-artist", value: %{artist: @artist})}
+      class="flex opacity-95 bg-slate-950 flex-row gap-2 p-2 hover:opacity-100 hover:cursor-pointer search-item"
+    >
       <div class="w-14 h-14 overflow-hidden rounded-md flex bg-gray-700">
-        <%= if @artist.image do %>
-          <img src={@artist.image} class="w-14 h-14 object-cover overflow-hidden" alt={@artist.name} />
+        <%= if @artist["image"] do %>
+          <img
+            src={@artist["image"]}
+            class="w-14 h-14 object-cover overflow-hidden"
+            alt={@artist["name"]}
+          />
         <% else %>
-          <.icon class="self-center m-auto " name="hero-photo" />
+          <.icon class="self-center m-auto" name="hero-photo" />
         <% end %>
       </div>
-      <p class="text-xl"><%= @artist.name %></p>
-      <.icon id="add-icon" class="self-center ml-auto w-8 h-8" name="hero-plus-circle" />
+      <p class="text-xl"><%= @artist["name"] %></p>
+      <%= if @artist["selected"] do %>
+        true
+      <% else %>
+        false
+      <% end %>
+      <div :if={@artist["selected"]}>
+        <.icon
+          id="remove-icon"
+          class="self-center ml-auto w-8 h-8 text-primary transition-colors"
+          name="hero-plus-circle"
+        />
+      </div>
+      <div :if={!@artist["selected"]}>
+        <.icon id="add-icon" class="self-center ml-auto w-8 h-8" name="hero-plus-circle" />
+      </div>
     </li>
     """
   end

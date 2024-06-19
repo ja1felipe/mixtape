@@ -21,7 +21,7 @@ module.exports = {
         brand: ["Fjalla", "sans-serif"]
       },
       animation: {
-        rotateOnce: 'rotateOnce 0.8s ease-out forwards',
+        rotateOnce: 'rotateOnce 1s ease-out forwards',
       },
       keyframes: {
         rotateOnce: {

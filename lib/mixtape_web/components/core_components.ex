@@ -593,10 +593,11 @@ defmodule MixtapeWeb.CoreComponents do
   attr :name, :string, required: true
   attr :class, :string, default: nil
   attr :id, :string, default: nil
+  attr :show, :boolean, default: true
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
-    <span id={@id} class={[@name, @class]} />
+    <span :if={@show} id={@id} class={[@name, @class]} />
     """
   end
 

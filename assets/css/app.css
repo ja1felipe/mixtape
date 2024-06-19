@@ -46,3 +46,18 @@ body>div {
     @apply duration-1000;
     @apply animate-rotateOnce;
 }
+
+.search-item:hover #remove-icon {
+    color: red; 
+    transition-property: color, transform;
+    transition-duration: 0.8s; 
+    transition-timing-function: ease-out; 
+    transform: rotate(135deg); 
+  }
+  
+  #remove-icon {
+    transition-property: color, transform;
+    transition-duration: 0.8s; 
+    transition-timing-function: ease-out; 
+    transform: rotate(0deg); 
+  }
