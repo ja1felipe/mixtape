@@ -4,13 +4,10 @@
 
 @font-face {
     font-family: 'Fjalla';
-    /* Name your font family */
     src: url('/fonts/FjallaOne-Regular.ttf');
-    /* Locate the .ttf file within your directory*/
 }
 
-/* This file is for your main application CSS */
-body>div {
+body > div {
     height: 100%;
 }
 
@@ -48,16 +45,31 @@ body>div {
 }
 
 .search-item:hover .remove-icon {
-    color: red; 
+    color: red;
     transition-property: color, transform;
-    transition-duration: 0.4s; 
-    transition-timing-function: ease-out; 
-    transform: rotate(135deg); 
-  }
-  
-  .remove-icon {
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+    transform: rotate(135deg);
+    @apply hero-plus-circle;
+    width: 2rem;
+    height: 2rem;
+}
+
+.remove-icon {
     transition-property: color, transform;
-    transition-duration: 0.4s; 
-    transition-timing-function: ease-out; 
-    transform: rotate(0deg); 
-  }
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+    transform: rotate(0deg);
+}
+
+.artists-list li {
+    border-bottom: none;
+}
+
+.artists-list li:last-child {
+    border-bottom: 1px solid rgb(148 163 184);
+}
+
+.exit:hover span {
+    @apply text-orange-500;
+}

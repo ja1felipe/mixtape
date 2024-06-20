@@ -8,9 +8,11 @@ SearchHooks = {
         if (input) {
             input.addEventListener("focus", this.handleFocus)
         }
-    },
-    updated() {
-        this.handleUpdate()
+
+        this.handleEvent("update-artists", (ev) => {
+            this.handleUpdated(ev.refresh)
+        })
+
     },
     destroyed() {
         document.removeEventListener("click", this.handleClickAway)
@@ -18,8 +20,14 @@ SearchHooks = {
         if (input) {
             input.removeEventListener("focus", this.handleFocus)
         }
-
-        this.el.removeEventListener("phx:update", this.handleUpdate)
+    },
+    handleUpdated(refresh) {
+        let searchBox = document.querySelector("#search-box")
+        if (searchBox && refresh) {
+            searchBox.classList.remove("hidden")
+            searchBox.classList.remove("fade-out")
+            searchBox.classList.add("fade-in")
+        }
     },
     handleClickAway(event) {
         let searchBox = document.querySelector("#search-box")
@@ -30,6 +38,7 @@ SearchHooks = {
             searchBox.classList.remove("fade-in")
             setTimeout(() => {
                 searchBox.classList.add("hidden")
+
             }, 200)
         }
     },
@@ -43,15 +52,5 @@ SearchHooks = {
             }, 10)
         }
     },
-    handleUpdate() {
-        let searchBox = document.querySelector("#search-box")
-        console.log("cu")
-        if (searchBox) {
-            searchBox.classList.remove("hidden")
-            searchBox.classList.remove("fade-out")
-            searchBox.classList.add("fade-in")
-        }
-    }
-
 }
 export default SearchHooks

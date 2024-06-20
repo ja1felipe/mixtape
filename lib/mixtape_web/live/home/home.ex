@@ -14,14 +14,22 @@ defmodule MixtapeWeb.HomeLive do
       socket
       |> assign(form: to_form(form))
       |> assign(:loading, false)
-      |> assign(:selected_artists, [])
+      |> assign(:selected_artists, [
+        %{
+          "id" => "29QKtXMaVczUBDiI3aPBWS",
+          "image" => "https://i.scdn.co/image/ab6761610000f178f11fcf161bed1f72afb30a21",
+          "name" => "FBC",
+          "selected" => true,
+          "uri" => "spotify:artist:29QKtXMaVczUBDiI3aPBWS"
+        }
+      ])
       |> assign(:artists, [
         %{
           "id" => "29QKtXMaVczUBDiI3aPBWS",
           "name" => "FBC",
           "image" => "https://i.scdn.co/image/ab6761610000f178f11fcf161bed1f72afb30a21",
           "uri" => "spotify:artist:29QKtXMaVczUBDiI3aPBWS",
-          "selected" => false
+          "selected" => true
         },
         %{
           "id" => "6aCbXH85qN6xo54C7atSMx",
@@ -56,37 +64,12 @@ defmodule MixtapeWeb.HomeLive do
     {:ok, socket}
   end
 
+  def handle_info({:select_artist, just_selected}, socket) do
+    handle_select_artists(just_selected, socket, false)
+  end
+
   def handle_event("select-artist", %{"artist" => just_selected}, socket) do
-    selected_artists = socket.assigns.selected_artists
-    artists = socket.assigns.artists
-
-    has_artists =
-      selected_artists
-      |> Enum.find(fn a -> a["id"] == just_selected["id"] end)
-
-    selected_artists =
-      if has_artists do
-        Enum.reject(selected_artists, fn a -> a["id"] == just_selected["id"] end)
-      else
-        [just_selected | selected_artists]
-      end
-      |> Enum.reverse()
-
-    artists_updated =
-      Enum.map(artists, fn artist ->
-        if artist["id"] == just_selected["id"] do
-          Map.update!(artist, "selected", fn selected -> !selected end)
-        else
-          artist
-        end
-      end)
-
-    socket =
-      socket
-      |> assign(:selected_artists, selected_artists)
-      |> assign(:artists, artists_updated)
-
-    {:noreply, socket}
+    handle_select_artists(just_selected, socket, true)
   end
 
   def handle_event("search", %{"search" => search}, socket) do
@@ -108,6 +91,7 @@ defmodule MixtapeWeb.HomeLive do
       socket
       |> assign(:loading, false)
       |> assign(:artists, res)
+      |> push_event("update-artists", %{refresh: true})
 
     {:noreply, socket}
   end
@@ -141,7 +125,6 @@ defmodule MixtapeWeb.HomeLive do
             end)
             |> (fn items -> %{items: items, next: Map.get(response.body["artists"], "next")} end).()
 
-          IO.inspect(result.items)
           result.items
         else
           []
@@ -151,5 +134,39 @@ defmodule MixtapeWeb.HomeLive do
         IO.inspect(response)
         :error
     end
+  end
+
+  defp handle_select_artists(just_selected, socket, refresh) do
+    selected_artists = socket.assigns.selected_artists
+    artists = socket.assigns.artists
+
+    has_artists =
+      selected_artists
+      |> Enum.find(fn a -> a["id"] == just_selected["id"] end)
+
+    selected_artists =
+      if has_artists do
+        Enum.reject(selected_artists, fn a -> a["id"] == just_selected["id"] end)
+      else
+        [just_selected | selected_artists]
+      end
+      |> Enum.reverse()
+
+    artists_updated =
+      Enum.map(artists, fn artist ->
+        if artist["id"] == just_selected["id"] do
+          Map.update!(artist, "selected", fn selected -> !selected end)
+        else
+          artist
+        end
+      end)
+
+    socket =
+      socket
+      |> assign(:selected_artists, selected_artists)
+      |> assign(:artists, artists_updated)
+      |> push_event("update-artists", %{refresh: refresh})
+
+    {:noreply, socket}
   end
 end
