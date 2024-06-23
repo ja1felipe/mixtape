@@ -73,3 +73,44 @@ body > div {
 .exit:hover span {
     @apply text-orange-500;
 }
+
+::-webkit-scrollbar {
+  width: 15px;               /* width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(2, 6, 23);        /* color of the tracking area */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.523);    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 4px solid rgb(2, 6, 23);  /* creates padding around scroll thumb */
+}
+
+.generate-button {
+	color: rgb(255, 255, 255);
+	text-shadow: 1px 1px 0px rgb(2, 6, 23);
+	cursor: pointer;
+	overflow: hidden;
+	background: #1ed760;
+    border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+    padding: 16px;
+}
+
+.generate-button:hover > span {
+	color: rgb(255, 255, 255);
+}
+
+.tooltip {
+    @apply invisible absolute;
+  }
+  
+  .has-tooltip:hover .tooltip {
+    @apply visible z-50;
+  }
+  

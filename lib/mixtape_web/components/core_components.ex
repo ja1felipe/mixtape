@@ -231,7 +231,7 @@ defmodule MixtapeWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+        "phx-submit-loading:opacity-75 bg-zinc-900 hover:bg-primary hover:text-slate-200 py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}
@@ -283,6 +283,9 @@ defmodule MixtapeWeb.CoreComponents do
 
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
+  attr :reverse, :boolean, default: false, doc: "reverse order of checkbox and label"
+  attr :width, :string, default: "w-full"
+  attr :direction, :string, default: "col"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
@@ -310,7 +313,7 @@ defmodule MixtapeWeb.CoreComponents do
 
     ~H"""
     <div phx-feedback-for={@name}>
-      <label class="flex items-center gap-4 text-sm text-zinc-600 leading-6">
+      <label class={"flex items-center gap-4 text-lg text-white leading-6 #{if @reverse, do: "flex-row-reverse"}"}>
         <input type="hidden" name={@name} value="false" />
         <input
           type="checkbox"
@@ -318,7 +321,7 @@ defmodule MixtapeWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="border-zinc-300 rounded text-zinc-900 focus:ring-0"
+          class="border-zinc-300 rounded text-zinc-900"
           {@rest}
         />
         <%= @label %>
@@ -335,7 +338,7 @@ defmodule MixtapeWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="block border-gray-300 focus:border-zinc-400 bg-white shadow-sm mt-2 border rounded-md w-full focus:ring-0 sm:text-sm"
+        class="block border-slate-500 focus:border-primary bg-slate-900 shadow-sm border rounded-md w-full focus:ring-0 sm:text-lg"
         multiple={@multiple}
         {@rest}
       >
@@ -370,7 +373,7 @@ defmodule MixtapeWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div class={"flex flex-#{@direction} gap-2 items-center" } phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
@@ -378,7 +381,7 @@ defmodule MixtapeWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "block w-full rounded-md bg-slate-900 border-slate-800 text-white focus:ring-0 sm:text-lg sm:leading-7",
+          "block rounded-md bg-slate-900 border-slate-800 text-white focus:ring-0 sm:text-lg sm:leading-7 #{@width}",
           "phx-no-feedback:border-slate-500 phx-no-feedback:focus:border-primary",
           @errors == [] && "border-slate-500 focus:border-slate-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
@@ -398,7 +401,7 @@ defmodule MixtapeWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block font-semibold text-sm text-zinc-800 leading-6">
+    <label for={@for} class="block font-semibold text-sm text-white leading-6">
       <%= render_slot(@inner_block) %>
     </label>
     """

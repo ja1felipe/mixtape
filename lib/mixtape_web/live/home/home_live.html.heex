@@ -21,7 +21,7 @@
             type="text"
             id="search"
             autocomplete="off"
-            placeholder="procure seus artistas favoritos"
+            placeholder="procure seus artistas favoritos..."
             class="bg-slate-900 p-1 rounded-none w-full text-2xl text-gray-300 placeholder:text-gray-400"
           />
           <svg
@@ -59,12 +59,19 @@
           artists={@artists}
         />
       </div>
-      <div class="mt-5 text-[40px]">
-        Comece a montar sua mais nova <span class="text-primary">
+      <%= if length(@selected_artists) > 0 do %>
+        <.live_component
+          id="selecteds"
+          module={BuildMixtapeComponent}
+          artists={@selected_artists}
+        />
+      <% else %>
+        <div class="mt-5 text-[40px]">
+          Comece a montar sua mais nova <span class="text-primary">
           MIXTAPE
         </span>, selecione a nata da nata pra essa hein!
-      </div>
-      <.live_component id="selecteds" module={BuildMixtapeComponent} artists={@selected_artists} />
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
