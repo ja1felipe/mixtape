@@ -106,4 +106,15 @@ defmodule Services.SpotifyAPI do
       query: [q: search, type: "artist", limit: limit, market: "BR", offset: page * limit]
     )
   end
+
+  def get_artists_top_tracks(access_token, artist_id) do
+    middleware =
+      [
+        {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
+      ] ++ @middleware
+
+    client = Tesla.client(middleware)
+
+    get(client, "/artists/#{artist_id}/top-tracks", query: [market: "BR"])
+  end
 end

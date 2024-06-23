@@ -64,6 +64,26 @@ defmodule MixtapeWeb.HomeLive do
     {:ok, socket}
   end
 
+  def handle_info({:generate_mixtape, size}, socket) do
+    %{:current_user => user, :artists => artists} = socket.assigns
+
+    how_many_of_each =
+      Float.ceil(size / length(artists))
+      |> round()
+
+    tracks =
+      artists
+      |> Enum.map(fn artist -> artist["id"] end)
+      |> Enum.map(&Task.async(fn -> SpotifyAPI.get_artists_top_tracks(user.access_token, &1) end))
+      |> Enum.map(&Task.await/1)
+      |> Enum.map(&get_tracks/1)
+      |> Enum.flat_map(&take_random_items(&1, how_many_of_each))
+      |> take_random_items(size)
+
+    IO.inspect(tracks)
+    {:noreply, socket}
+  end
+
   def handle_info({:select_artist, just_selected}, socket) do
     handle_select_artists(just_selected, socket, false)
   end
@@ -168,5 +188,31 @@ defmodule MixtapeWeb.HomeLive do
       |> push_event("update-artists", %{refresh: refresh})
 
     {:noreply, socket}
+  end
+
+  defp take_random_items(list, count) do
+    list
+    |> Enum.shuffle()
+    |> Enum.take(count)
+  end
+
+  defp get_tracks({:ok, response}) do
+    tracks = response.body["tracks"]
+
+    tracks =
+      tracks
+      |> Enum.map(fn track ->
+        %{
+          "id" => track["id"],
+          "track_name" => track["name"],
+          "image" =>
+            case track["album"]["images"] do
+              [] -> nil
+              images -> Enum.min_by(images, & &1["height"])["url"]
+            end
+        }
+      end)
+
+    tracks
   end
 end

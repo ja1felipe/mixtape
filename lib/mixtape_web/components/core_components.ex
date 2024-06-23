@@ -321,7 +321,10 @@ defmodule MixtapeWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="border-zinc-300 rounded text-zinc-900"
+          class={[
+            "border-zinc-300 rounded text-zinc-900",
+            "disabled:bg-slate-500 disabled:text-slate-800"
+          ]}
           {@rest}
         />
         <%= @label %>
@@ -383,6 +386,7 @@ defmodule MixtapeWeb.CoreComponents do
         class={[
           "block rounded-md bg-slate-900 border-slate-800 text-white focus:ring-0 sm:text-lg sm:leading-7 #{@width}",
           "phx-no-feedback:border-slate-500 phx-no-feedback:focus:border-primary",
+          "disabled:bg-slate-500 disabled:text-slate-800",
           @errors == [] && "border-slate-500 focus:border-slate-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
