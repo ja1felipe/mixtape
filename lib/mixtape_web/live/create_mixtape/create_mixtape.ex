@@ -65,14 +65,14 @@ defmodule MixtapeWeb.CreateMixtapeLive do
   end
 
   def handle_info({:generate_mixtape, size}, socket) do
-    %{:current_user => user, :artists => artists} = socket.assigns
+    %{:current_user => user, :selected_artists => selected_artists} = socket.assigns
 
     how_many_of_each =
-      Float.ceil(size / length(artists))
+      Float.ceil(size / length(selected_artists))
       |> round()
 
     tracks =
-      artists
+      selected_artists
       |> Enum.map(fn artist -> artist["id"] end)
       |> Enum.map(&Task.async(fn -> SpotifyAPI.get_artists_top_tracks(user.access_token, &1) end))
       |> Enum.map(&Task.await/1)
@@ -81,6 +81,12 @@ defmodule MixtapeWeb.CreateMixtapeLive do
       |> take_random_items(size)
 
     IO.inspect(tracks)
+
+    socket =
+      socket
+      |> assign(:tracks, tracks)
+      |> push_navigate(to: "/wrapup")
+
     {:noreply, socket}
   end
 
