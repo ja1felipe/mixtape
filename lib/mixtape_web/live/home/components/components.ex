@@ -90,9 +90,9 @@ defmodule MixtapeWeb.Home.Components do
 
   def artist_list(assigns) do
     ~H"""
-    <div class="overflow-auto" id={@id}>
+    <div id={@id}>
       <%= if length(@artists) > 0 do %>
-        <ul class="flex flex-col w-full overflow-hidden artists-list">
+        <ul class="flex flex-col w-full artists-list">
           <%= for artist <- @artists do %>
             <.artist_list_item target={@target} artist={artist} />
           <% end %>

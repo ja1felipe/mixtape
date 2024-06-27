@@ -9,6 +9,7 @@ defmodule MixtapeWeb.Layouts do
   `use MixtapeWeb, :live_view`.
   """
   use MixtapeWeb, :html
+  import MixtapeWeb.Home.Components
 
   embed_templates "layouts/*"
 end

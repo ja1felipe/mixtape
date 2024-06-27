@@ -55,6 +55,12 @@ config :mixtape, MixtapeWeb.Endpoint,
 # Watch static and templates for browser reloading.
 config :mixtape, MixtapeWeb.Endpoint,
   live_reload: [
+    notify: [
+      live_view: [
+        ~r"lib/mixtape_web/core_components.ex$",
+        ~r"lib/mixtape_web/(live|components)/.*(ex|heex)$"
+      ]
+    ],
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",

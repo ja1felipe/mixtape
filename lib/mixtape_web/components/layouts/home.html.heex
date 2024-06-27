@@ -1,0 +1,22 @@
+<main class="flex flex-col h-full max-h-full font-brand">
+  <.flash_group flash={@flash} />
+  <div class="flex justify-center items-center w-full h-full">
+    <div class="flex flex-row gap-2 border-slate-800 bg-gray-900 border rounded-sm rounded-ss w-10/12 md:w-9/12 lg:w-8/12 xl:w-7/12 xs:w-11/12 h-[80%] text-white">
+      <div class="flex flex-col p-2 basis-1/3 grow">
+        <p class="text-primary text-xl">SUAS MIXTAPES</p>
+        <.empty_mixtapes />
+        <.link
+          href={~p"/logout"}
+          method="delete"
+          class="flex flex-row justify-center items-center border-slate-600 hover:border-orange-500 pt-2 border-t text-slate-200 exit"
+        >
+          sair <span class="hero-arrow-right-start-on-rectangle w-5 h-5" />
+        </.link>
+      </div>
+      <div class="border-slate-800 m-1 border-r"></div>
+      <div class="flex flex-col mx-auto p-2 w-10/12 h-full basis-2/3 grow">
+        <%= @inner_content %>
+      </div>
+    </div>
+  </div>
+</main>
