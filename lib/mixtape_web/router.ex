@@ -53,9 +53,9 @@ defmodule MixtapeWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
-      layout: {MixtapeWeb.Layouts, :home},
+      layout: {MixtapeWeb.Layouts, :mixtape},
       on_mount: [{MixtapeWeb.UserAuth, :ensure_authenticated}] do
-      live "/home", HomeLive, :home
+      live "/home", CreateMixtapeLive, :home
     end
   end
 

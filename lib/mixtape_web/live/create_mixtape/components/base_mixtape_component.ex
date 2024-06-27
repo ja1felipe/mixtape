@@ -1,8 +1,8 @@
-defmodule MixtapeWeb.Home.BuildMixtapeComponent do
+defmodule MixtapeWeb.CreateMixtape.BaseMixtapeComponent do
   use Phoenix.LiveComponent
 
   import MixtapeWeb.CoreComponents
-  import MixtapeWeb.Home.Components
+  import MixtapeWeb.CreateMixtape.Components
 
   def mount(socket) do
     form =
@@ -91,7 +91,7 @@ defmodule MixtapeWeb.Home.BuildMixtapeComponent do
       </.form>
       <div class="self-end mt-6">
         <div class="group cursor-pointer relative inline-block text-center">
-          <.button class="generate-button">
+          <.button class="generate-button" form="form">
             <%= if @loading do %>
               <svg
                 class=" text-primary animate-spin"

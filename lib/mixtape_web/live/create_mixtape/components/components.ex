@@ -1,4 +1,4 @@
-defmodule MixtapeWeb.Home.Components do
+defmodule MixtapeWeb.CreateMixtape.Components do
   alias Phoenix.LiveView.JS
   use Phoenix.Component
 

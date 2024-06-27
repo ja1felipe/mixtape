@@ -1,9 +1,9 @@
-defmodule MixtapeWeb.HomeLive do
+defmodule MixtapeWeb.CreateMixtapeLive do
   alias Services.SpotifyAPI
   use MixtapeWeb, :live_view
-  import MixtapeWeb.Home.Components
+  import MixtapeWeb.CreateMixtape.Components
   import Phoenix.Component
-  alias MixtapeWeb.Home.BuildMixtapeComponent
+  alias MixtapeWeb.CreateMixtape.BaseMixtapeComponent
 
   def mount(_params, _session, socket) do
     form =
