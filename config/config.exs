@@ -7,6 +7,12 @@
 # General application configuration
 import Config
 
+config :mixtape, Mixtape.Mixtapes,
+  database: "mixtape_mixtapes",
+  username: "user",
+  password: "pass",
+  hostname: "localhost"
+
 config :mixtape,
   ecto_repos: [Mixtape.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]

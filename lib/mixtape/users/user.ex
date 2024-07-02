@@ -9,6 +9,7 @@ defmodule Mixtape.Users.User do
     field :refresh_token, :string, redact: true
     field :spotify_id, :string
     field :name, :string
+    has_many :mixtapes, Mixtape.Mixtapes.Mixtape
 
     timestamps(type: :utc_datetime)
   end
