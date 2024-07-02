@@ -1,4 +1,5 @@
 defmodule MixtapeWeb.CreateMixtapeLive do
+  alias Mixtape.Mixtapes
   alias Services.SpotifyAPI
   use MixtapeWeb, :live_view
   import MixtapeWeb.CreateMixtape.Components
@@ -80,14 +81,23 @@ defmodule MixtapeWeb.CreateMixtapeLive do
       |> Enum.flat_map(&take_random_items(&1, how_many_of_each))
       |> take_random_items(size)
 
-    IO.inspect(tracks)
+    case Mixtapes.register_mixtape(%{
+           "user_id" => user.id,
+           "tracks" => tracks,
+           "artists" => selected_artists
+         }) do
+      {:ok, mixtape} ->
+        socket =
+          socket
+          |> assign(:tracks, tracks)
+          |> push_navigate(to: "/wrapup/#{mixtape.id}")
 
-    socket =
-      socket
-      |> assign(:tracks, tracks)
-      |> push_navigate(to: "/wrapup")
+        {:noreply, socket}
 
-    {:noreply, socket}
+      {:error, changeset} ->
+        IO.inspect(changeset)
+        {:noreply, socket}
+    end
   end
 
   def handle_info({:select_artist, just_selected}, socket) do

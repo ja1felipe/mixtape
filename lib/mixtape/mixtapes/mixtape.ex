@@ -17,7 +17,7 @@ defmodule Mixtape.Mixtapes.Mixtape do
   @doc false
   def changeset(mixtape, attrs) do
     mixtape
-    |> cast(attrs, [:name, :tracks, :arists, :status, :user_id])
+    |> cast(attrs, [:name, :tracks, :artists, :status, :user_id])
     |> validate_required([:user_id, :tracks, :artists])
   end
 end

@@ -4,7 +4,7 @@ defmodule Mixtape.Mixtapes do
 
   alias Mixtape.Mixtapes.{Mixtape}
 
-  def register_user(attrs) do
+  def register_mixtape(attrs) do
     %Mixtape{}
     |> Mixtape.changeset(attrs)
     |> Repo.insert()
