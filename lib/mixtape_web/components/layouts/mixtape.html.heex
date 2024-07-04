@@ -4,6 +4,7 @@
     <div class="flex flex-row gap-2 border-slate-800 bg-gray-900 border rounded-sm rounded-ss w-10/12 md:w-9/12 lg:w-8/12 xl:w-7/12 xs:w-11/12 h-[80%] text-white">
       <div class="flex flex-col p-2 basis-3/12 grow">
         <p class="text-primary text-xl">SUAS MIXTAPES</p>
+        <%= inspect(@user_mixtapes) %>
         <.empty_mixtapes />
         <.link
           href={~p"/logout"}

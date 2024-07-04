@@ -54,7 +54,10 @@ defmodule MixtapeWeb.Router do
 
     live_session :require_authenticated_user,
       layout: {MixtapeWeb.Layouts, :mixtape},
-      on_mount: [{MixtapeWeb.UserAuth, :ensure_authenticated}] do
+      on_mount: [
+        {MixtapeWeb.UserAuth, :ensure_authenticated},
+        {MixtapeWeb.LiveHooks.Mixtapes, :fetch_user_mixtapes}
+      ] do
       live "/home", CreateMixtapeLive, :home
       live "/wrapup/:id", UpdateMixtapeLive, :wrapup
     end
