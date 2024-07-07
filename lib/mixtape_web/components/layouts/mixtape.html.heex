@@ -3,13 +3,24 @@
   <div class="flex justify-center items-center w-full h-full">
     <div class="flex flex-row gap-2 border-slate-800 bg-gray-900 border rounded-sm rounded-ss w-10/12 md:w-9/12 lg:w-8/12 xl:w-7/12 xs:w-11/12 h-[80%] text-white">
       <div class="flex flex-col p-2 basis-3/12 grow">
-        <p class="text-primary text-xl">SUAS MIXTAPES</p>
-        <%= inspect(@user_mixtapes) %>
-        <.empty_mixtapes />
+        <p class="text-primary text-xl">MIXTAPE</p>
+        <ul class="mt-6">
+          <li class="flex flex-row gap-2 justify-center items-center border-b-2 border-primary p-3 opacity-70 hover:opacity-100 hover:cursor-pointer">
+            HOME <span class="hero-home" />
+          </li>
+          <li
+            phx-click={toggle_mixtapes()}
+            class="flex flex-row gap-2 justify-center items-center border-b-2 border-primary p-3 opacity-70 hover:opacity-100 hover:cursor-pointer"
+          >
+            <span id="mixtapes-menu-arrow" class="hero-chevron-down w-4 h-4" /> SUAS MIXTAPES
+            <span class="hero-musical-note" />
+          </li>
+        </ul>
+        <.mixtapes_list mixtapes={@user_mixtapes} id="mixtapes-menu" />
         <.link
           href={~p"/logout"}
           method="delete"
-          class="flex flex-row justify-center items-center border-slate-600 hover:border-orange-500 pt-2 border-t text-slate-200 exit"
+          class="flex flex-row justify-center items-center border-slate-600 hover:border-red-500 pt-2 border-t text-slate-200 exit mt-auto"
         >
           sair <span class="hero-arrow-right-start-on-rectangle w-5 h-5" />
         </.link>

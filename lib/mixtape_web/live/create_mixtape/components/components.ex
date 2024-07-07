@@ -4,39 +4,6 @@ defmodule MixtapeWeb.CreateMixtape.Components do
 
   import MixtapeWeb.CoreComponents
 
-  def empty_mixtapes(assigns) do
-    ~H"""
-    <ul class="flex flex-col gap-2 mt-5 h-full">
-      <li class="flex flex-row gap-2">
-        <div class="bg-white opacity-10 rounded-sm w-16 h-16"></div>
-        <div class="flex flex-col gap-2 grow">
-          <div class="bg-white opacity-10 w-full h-4"></div>
-          <div class="bg-white opacity-10 w-10/12 h-4"></div>
-          <div class="bg-white opacity-10 w-8/12 h-4"></div>
-        </div>
-      </li>
-      <hr class="border-primary opacity-60" />
-      <li class="flex flex-row gap-2">
-        <div class="bg-white opacity-10 rounded-sm w-16 h-16"></div>
-        <div class="flex flex-col gap-2 grow">
-          <div class="bg-white opacity-10 w-full h-4"></div>
-          <div class="bg-white opacity-10 w-10/12 h-4"></div>
-          <div class="bg-white opacity-10 w-8/12 h-4"></div>
-        </div>
-      </li>
-      <hr class="border-primary opacity-60" />
-      <li class="flex flex-row gap-2">
-        <div class="bg-white opacity-10 rounded-sm w-16 h-16"></div>
-        <div class="flex flex-col gap-2 grow">
-          <div class="bg-white opacity-10 w-full h-4"></div>
-          <div class="bg-white opacity-10 w-10/12 h-4"></div>
-          <div class="bg-white opacity-10 w-8/12 h-4"></div>
-        </div>
-      </li>
-    </ul>
-    """
-  end
-
   attr :artists, :list, required: true
   attr :id, :string, required: true
   attr :phx_hook, :string

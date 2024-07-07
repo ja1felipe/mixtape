@@ -71,7 +71,7 @@ body > div {
 }
 
 .exit:hover span {
-    @apply text-orange-500;
+    @apply text-red-500;
 }
 
 ::-webkit-scrollbar {
