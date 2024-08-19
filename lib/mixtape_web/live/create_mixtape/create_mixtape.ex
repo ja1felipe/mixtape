@@ -4,7 +4,7 @@ defmodule MixtapeWeb.CreateMixtapeLive do
   use MixtapeWeb, :live_view
   import MixtapeWeb.CreateMixtape.Components
   import Phoenix.Component
-  alias MixtapeWeb.CreateMixtape.BaseMixtapeComponent
+  alias MixtapeWeb.CreateMixtape.Live.MixtapeBuilder
 
   def mount(_params, _session, socket) do
     form =

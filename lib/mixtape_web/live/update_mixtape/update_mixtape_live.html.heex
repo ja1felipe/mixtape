@@ -1,1 +1,13 @@
-opa
+<div class="overflow-hidden flex flex-col h-full gap-3">
+  <.form for={@form}>
+    <.input
+      field={@form[:name]}
+      type="text"
+      label="Nome da Mixtape"
+      items_align="start"
+      placeholder={@mixtape.name || "qual será o nome dessa delícia?"}
+      class="bg-slate-900 p-1 rounded-none w-full text-2xl text-gray-300 placeholder:text-gray-400"
+    />
+  </.form>
+  <.tracks_list tracks={@mixtape.tracks} id="tracks" />
+</div>

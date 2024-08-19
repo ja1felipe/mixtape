@@ -7,8 +7,8 @@ defmodule Mixtape.Repo.Migrations.CreateUsersAuthTables do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :email, :citext, null: false
-      add :access_token, :string
-      add :refresh_token, :string
+      add :access_token, :text
+      add :refresh_token, :text
       add :spotify_id, :string, null: false
       add :name, :string, null: false
       timestamps(type: :utc_datetime)

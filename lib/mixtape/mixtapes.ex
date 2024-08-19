@@ -13,4 +13,8 @@ defmodule Mixtape.Mixtapes do
   def get_mixtapes_by_user_id(user_id) when is_binary(user_id) do
     Repo.all(from(m in Mixtape, where: m.user_id == ^user_id))
   end
+
+  def get_by_id(id) when is_binary(id) do
+    Repo.get!(Mixtape, id)
+  end
 end

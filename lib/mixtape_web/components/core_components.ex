@@ -286,6 +286,7 @@ defmodule MixtapeWeb.CoreComponents do
   attr :reverse, :boolean, default: false, doc: "reverse order of checkbox and label"
   attr :width, :string, default: "w-full"
   attr :direction, :string, default: "col"
+  attr :items_align, :string, default: "center"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
@@ -376,7 +377,7 @@ defmodule MixtapeWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class={"flex flex-#{@direction} gap-2 items-center" } phx-feedback-for={@name}>
+    <div class={"flex flex-#{@direction} gap-2 items-#{@items_align}" } phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}

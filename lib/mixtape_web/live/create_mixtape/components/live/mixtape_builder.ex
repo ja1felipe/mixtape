@@ -1,4 +1,4 @@
-defmodule MixtapeWeb.CreateMixtape.BaseMixtapeComponent do
+defmodule MixtapeWeb.CreateMixtape.Live.MixtapeBuilder do
   use Phoenix.LiveComponent
 
   import MixtapeWeb.CoreComponents

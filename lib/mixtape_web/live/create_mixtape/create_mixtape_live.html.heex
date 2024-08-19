@@ -43,7 +43,7 @@
   <%= if length(@selected_artists) > 0 do %>
     <.live_component
       id="selecteds"
-      module={BaseMixtapeComponent}
+      module={MixtapeBuilder}
       artists={@selected_artists}
       user={@current_user}
     />
