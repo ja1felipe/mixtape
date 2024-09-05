@@ -5,10 +5,8 @@ defmodule MixtapeWeb.UpdateMixtapeLive do
 
   def mount(params, _session, socket) do
     %{"id" => id} = params
-    IO.inspect(id)
     mixtape = Mixtapes.get_by_id(id)
-    IO.inspect(mixtape)
-    form = %{name: mixtape.name}
+    form = %{"name" => mixtape.name}
 
     socket =
       socket
@@ -16,5 +14,10 @@ defmodule MixtapeWeb.UpdateMixtapeLive do
       |> assign(:form, to_form(form))
 
     {:ok, socket}
+  end
+
+  def handle_event("create-playlist", unsigned_params, socket) do
+    IO.inspect(unsigned_params)
+    {:noreply, socket}
   end
 end

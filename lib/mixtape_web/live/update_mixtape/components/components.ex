@@ -4,7 +4,7 @@ defmodule MixtapeWeb.UpdateMixtape.Components do
 
   def tracks_list(assigns) do
     ~H"""
-    <div id={@id}>
+    <div id={@id} class="overflow-y-auto">
       <%= if length(@tracks) > 0 do %>
         <ul class="flex flex-col w-full tracks-list">
           <%= for track <- @tracks do %>
