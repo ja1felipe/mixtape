@@ -71,17 +71,6 @@ defmodule Services.SpotifyAPI do
     })
   end
 
-  def get_profile(access_token) do
-    middleware =
-      [
-        {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
-      ] ++ @middleware
-
-    client = Tesla.client(middleware)
-
-    get(client, "/me")
-  end
-
   defp generate_authorization_header do
     client_id = Application.get_env(:mixtape, :spotify_client_id)
     client_secret = Application.get_env(:mixtape, :spotify_client_secret)
@@ -92,29 +81,48 @@ defmodule Services.SpotifyAPI do
     "Basic #{encoded_auth_string}"
   end
 
+  def get_profile(access_token) do
+    build_client(access_token)
+    |> get("/me")
+  end
+
   def search(access_token, search, page \\ 0) do
     limit = 5
 
-    middleware =
-      [
-        {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
-      ] ++ @middleware
-
-    client = Tesla.client(middleware)
-
-    get(client, "/search",
+    build_client(access_token)
+    |> get("/search",
       query: [q: search, type: "artist", limit: limit, market: "BR", offset: page * limit]
     )
   end
 
   def get_artists_top_tracks(access_token, artist_id) do
+    build_client(access_token)
+    |> get("/artists/#{artist_id}/top-tracks", query: [market: "BR"])
+  end
+
+  def create_playlist(access_token, user_id, name) do
+    build_client(access_token)
+    |> post("/users/#{user_id}/playlists", %{
+      name: name,
+      public: false,
+      collaborative: false,
+      description: "Essa delicinha foi criada pelo Mixtape"
+    })
+  end
+
+  def fill_playlist(access_token, playlist_id, tracks_uris) do
+    build_client(access_token)
+    |> post("/playlists/#{playlist_id}/tracks", %{
+      uris: tracks_uris
+    })
+  end
+
+  defp build_client(access_token) do
     middleware =
       [
         {Tesla.Middleware.Headers, [{"Authorization", "Bearer #{access_token}"}]}
       ] ++ @middleware
 
-    client = Tesla.client(middleware)
-
-    get(client, "/artists/#{artist_id}/top-tracks", query: [market: "BR"])
+    Tesla.client(middleware)
   end
 end

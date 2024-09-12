@@ -15,52 +15,8 @@ defmodule MixtapeWeb.CreateMixtapeLive do
       socket
       |> assign(form: to_form(form))
       |> assign(:loading, false)
-      |> assign(:selected_artists, [
-        %{
-          "id" => "29QKtXMaVczUBDiI3aPBWS",
-          "image" => "https://i.scdn.co/image/ab6761610000f178f11fcf161bed1f72afb30a21",
-          "name" => "FBC",
-          "selected" => true,
-          "uri" => "spotify:artist:29QKtXMaVczUBDiI3aPBWS"
-        }
-      ])
-      |> assign(:artists, [
-        %{
-          "id" => "29QKtXMaVczUBDiI3aPBWS",
-          "name" => "FBC",
-          "image" => "https://i.scdn.co/image/ab6761610000f178f11fcf161bed1f72afb30a21",
-          "uri" => "spotify:artist:29QKtXMaVczUBDiI3aPBWS",
-          "selected" => true
-        },
-        %{
-          "id" => "6aCbXH85qN6xo54C7atSMx",
-          "name" => "Black Alien",
-          "image" => "https://i.scdn.co/image/ab6761610000f178ba2786969b06c231b04a3f80",
-          "uri" => "spotify:artist:6aCbXH85qN6xo54C7atSMx",
-          "selected" => false
-        },
-        %{
-          "id" => "5Znx4PG5UsUitigaJnmZX3",
-          "name" => "Flora Matos",
-          "image" => "https://i.scdn.co/image/ab6761610000f1787f25349a142a2a41fc51af7b",
-          "uri" => "spotify:artist:5Znx4PG5UsUitigaJnmZX3",
-          "selected" => false
-        },
-        %{
-          "id" => "25iPyUnAhtlrcpkscGuXgm",
-          "name" => "Fbc",
-          "image" => nil,
-          "uri" => "spotify:artist:25iPyUnAhtlrcpkscGuXgm",
-          "selected" => false
-        },
-        %{
-          "id" => "38kjd8LvypN0JqxHcXYvqh",
-          "name" => "FBCORUJA",
-          "image" => nil,
-          "uri" => "spotify:artist:38kjd8LvypN0JqxHcXYvqh",
-          "selected" => false
-        }
-      ])
+      |> assign(:selected_artists, [])
+      |> assign(:artists, [])
 
     {:ok, socket}
   end
@@ -100,6 +56,7 @@ defmodule MixtapeWeb.CreateMixtapeLive do
     end
   end
 
+  # This is confusing because I had to deal with the select, hover and click away in the search bar/box, and to do this I used Hooks, so this event has to be handled in the JS Hook and the LiveView
   def handle_info({:select_artist, just_selected}, socket) do
     handle_select_artists(just_selected, socket, false)
   end
@@ -225,7 +182,8 @@ defmodule MixtapeWeb.CreateMixtapeLive do
             case track["album"]["images"] do
               [] -> nil
               images -> Enum.min_by(images, & &1["height"])["url"]
-            end
+            end,
+          "uri" => track["uri"]
         }
       end)
 
