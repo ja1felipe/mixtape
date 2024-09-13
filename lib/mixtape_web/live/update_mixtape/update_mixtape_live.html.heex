@@ -13,7 +13,7 @@
   <div class="self-end mt-6">
     <div class="group cursor-pointer relative inline-block text-center">
       <.button class="generate-button" form="update-form">
-        <%= if false do %>
+        <%= if @loading do %>
           <svg
             class=" text-primary animate-spin"
             viewBox="0 0 64 64"

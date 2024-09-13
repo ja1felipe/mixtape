@@ -17,4 +17,12 @@ defmodule Mixtape.Mixtapes do
   def get_by_id(id) when is_binary(id) do
     Repo.get!(Mixtape, id)
   end
+
+  def update_mixtape(id, attrs) do
+    mixtape = get_by_id(id)
+
+    mixtape
+    |> Mixtape.changeset(attrs)
+    |> Repo.update()
+  end
 end
