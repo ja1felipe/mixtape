@@ -10,6 +10,7 @@ defmodule MixtapeWeb.Layouts do
   """
   use MixtapeWeb, :html
   import MixtapeWeb.Components
+  alias MixtapeWeb.ListMixtapes
   alias Phoenix.LiveView.JS
 
   embed_templates "layouts/*"

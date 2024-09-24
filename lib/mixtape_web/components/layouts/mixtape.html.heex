@@ -16,7 +16,8 @@
             <span class="hero-musical-note" />
           </li>
         </ul>
-        <.mixtapes_list mixtapes={@user_mixtapes} id="mixtapes-menu" />
+        <.live_component id="mixtapes-menu2" module={ListMixtapes} current_user={@current_user} />
+
         <.link
           href={~p"/logout"}
           method="delete"
