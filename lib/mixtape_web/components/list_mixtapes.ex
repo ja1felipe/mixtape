@@ -24,7 +24,7 @@ defmodule MixtapeWeb.ListMixtapes do
 
   def render(assigns) do
     ~H"""
-    <ul id={@id} class={["flex flex-col gap-2 mt-5 h-full"]}>
+    <ul id={@id} class={["flex flex-col gap-2 mt-5 h-full overflow-y-auto"]}>
       <li
         :for={{id, mixtape} <- @streams.mixtapes}
         class="flex flex-row gap-2 cursor-pointer opacity-85 hover:opacity-100"
